@@ -1,0 +1,117 @@
+[
+  {
+    "input": "ⲉⲩⲁⲅⲅⲉⲗⲓⲟⲛ",
+    "result": "evangelion",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲡⲁⲛⲧⲟⲕⲣⲁⲧⲱⲣ",
+    "result": "pandokrator",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲁⲙⲡⲉⲗⲟⲛ",
+    "result": "ambelon",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲭⲉⲣⲉ",
+    "result": "shere",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲭⲣⲓⲥⲧⲟⲥ",
+    "result": "khristos",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲛ̀ⲑⲟⲕ",
+    "result": "enthok",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲡⲛⲟⲩⲧⲉ",
+    "result": "pnoute",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲧⲉⲕⲕⲗⲏⲥⲓⲁ",
+    "result": "tekklesia",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲙⲁⲣⲓⲁ",
+    "result": "maria",
+    "unmapped": ""
+  },
+  {
+    "input": "ϣⲉⲣⲉ",
+    "result": "shere",
+    "unmapped": ""
+  },
+  {
+    "input": "ϯ",
+    "result": "ti",
+    "unmapped": ""
+  },
+  {
+    "input": "Ⲙⲁⲣⲓⲁ",
+    "result": "maria",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲡⲛⲟⲩⲧⲉ, ⲙⲁⲣⲓⲁ!",
+    "result": "pnoute, maria!",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲙⲁⲣⲓⲁ\nⲙⲁⲣⲓⲁ",
+    "result": "maria\nmaria",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲡ̅ⲛ̅ⲟⲩⲧⲉ",
+    "result": "pnoute",
+    "unmapped": ""
+  },
+  {
+    "input": "ⲡⲛⲟⲩⲧⲉ ⳁ",
+    "result": "pnoute ⳁ",
+    "unmapped": "ⳁ"
+  },
+  {
+    "input": "ⳁ ⳁ ⳁ",
+    "result": "ⳁ ⳁ ⳁ",
+    "unmapped": "ⳁ"
+  },
+  {
+    "input": "Amen ⲁⲙⲏⲛ amen",
+    "result": "amen amen amen",
+    "unmapped": ""
+  },
+  {
+    "input": "Ϫⲉ Ⲡⲉⲛⲓⲱⲧ ⲉⲧϧⲉⲛ ⲛⲓⲫⲏⲟⲩⲓ ⲙⲁⲣⲉϥⲧⲟⲩⲃⲟ ⲛ̀ϫⲉ ⲡⲉⲕⲣⲁⲛ",
+    "result": "je peniot etkhen nipheoui mareftouvo enje pekran",
+    "unmapped": ""
+  },
+  {
+    "input": "Ⲁⲅⲓⲟⲥ ⲟ Ⲑⲉⲟⲥ: Ⲁⲅⲓⲟⲥ Ⲓⲥⲭⲩⲣⲟⲥ: Ⲁⲅⲓⲟⲥ Ⲁⲑⲁⲛⲁⲧⲟⲥ",
+    "result": "agios o theos: agios isshuros: agios athanatos",
+    "unmapped": ""
+  },
+  {
+    "input": "Ⲕⲩⲣⲓⲉ ⲉ̀ⲗⲉⲏ̀ⲥⲟⲛ",
+    "result": "kurie eleeson",
+    "unmapped": ""
+  },
+  {
+    "input": "Ⲡⲓⲭ̀ⲣⲓⲥⲧⲟⲥ ⲁϥⲧⲱⲛϥ ⲉ̀ⲃⲟⲗ ϧⲉⲛ ⲛⲏⲉⲑⲙⲱⲟⲩⲧ",
+    "result": "piekhristos aftonf evol khen neethmoout",
+    "unmapped": ""
+  },
+  {
+    "input": "Ϣⲉⲣⲉ ⲛⲉ Ⲙⲁⲣⲓⲁ ϯϭ̀ⲣⲟⲙⲡⲓ ⲉⲑⲛⲉⲥⲱⲥ",
+    "result": "shere ne maria tiechrombi ethnesos",
+    "unmapped": ""
+  }
+]
