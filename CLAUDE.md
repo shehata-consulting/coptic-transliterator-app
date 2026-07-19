@@ -31,4 +31,6 @@ Three tabs: **Transliterate** (live rule-based engine, on-screen Coptic keyboard
 
 ## Deploy
 
-Not wired up yet. Plan: Firebase Hosting (new dedicated Firebase project, Spark/free plan), same workflow as the siblings (`expo export --platform web` → deploy on push to `main`). Until then the Streamlit app remains the live tool.
+- **Live app:** <https://coptic-transliterator-app.web.app> — Firebase Hosting, dedicated project `coptic-transliterator-app` on the **Spark (no-cost) plan**; keep it on Spark, there is nothing here that needs billing.
+- [.github/workflows/deploy.yml](.github/workflows/deploy.yml) — on every push to `main`, exports the web build (`npx expo export --platform web` → `dist/`) and deploys using the `FIREBASE_SERVICE_ACCOUNT` secret (service account `github-action-deploy@coptic-transliterator-app.iam.gserviceaccount.com`, scoped to hosting-admin on this project only). **Push = production deploy** — confirm with the user before pushing.
+- `dist/` is generated; never hand-edit or commit it.
