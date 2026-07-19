@@ -28,6 +28,14 @@ export default function Root({ children }: PropsWithChildren) {
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <ScrollViewStyleReset />
+        {/* Offline: register the service worker (public/sw.js). Skipped on
+            localhost so the dev server's bundles never get cached. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "if ('serviceWorker' in navigator && location.hostname !== 'localhost') { window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js'); }); }",
+          }}
+        />
       </head>
       <body style={{ backgroundColor: '#0b1024' }}>{children}</body>
     </html>
