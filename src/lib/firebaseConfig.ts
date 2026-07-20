@@ -1,5 +1,13 @@
 // Public Firebase web config — intentionally committed (same convention as
-// the sibling apps). Identifies the project; grants no privileged access.
+// the sibling apps). Identifies the project; grants no privileged access, and
+// it ships in the deployed JS bundle regardless, so removing it from git would
+// protect nothing.
+//
+// GitHub secret scanning flags the `AIza…` shape generically; this is the
+// expected false positive, NOT the Gemini key (that one is stored server-side
+// in the project's AI Logic config and appears nowhere in this repo). The
+// browser key is hardened out-of-band instead: an API allowlist plus HTTP
+// referrer restrictions pinned to the Hosting domains and localhost.
 export const FIREBASE_CONFIG = {
   apiKey: 'AIzaSyB9HqNEBViPxKBqdug29ichtOgyoMZcsaI',
   authDomain: 'coptic-transliterator-app.firebaseapp.com',

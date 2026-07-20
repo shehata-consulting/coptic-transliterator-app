@@ -29,7 +29,14 @@ Three tabs: **Transliterate** (live rule-based engine, on-screen Coptic keyboard
 - **Model is the rolling alias `gemini-flash-lite-latest`.** The Streamlit app's pinned `gemini-2.5-flash-lite` returns 404 "no longer available to new users" on this (newer) project. Don't pin a dated model here without checking it resolves for this project first.
 - **The Gemini API key lives server-side** in the project's AI Logic config (`generativeLanguageConfig`), never in this bundle. Rotate it via the Firebase console or the `firebasevertexai …/locations/global/config` PATCH endpoint.
 - **Cost:** Gemini Developer API free tier on the Spark plan. There is no billing account, so quota exhaustion degrades to `null` (rule-based fallback) — it can never produce a charge.
-- **App Check** (reCAPTCHA Enterprise, site key in `firebaseConfig.ts`) initializes **lazily inside `getModel()`**, not at startup — it fetches reCAPTCHA from google.com, and the offline-first rule-based path must never depend on the network. ⚠️ **Enforcement is not on yet**: the client sends tokens, but until enforcement is enabled for AI Logic in the Firebase console (App Check → APIs), App Check provides no actual protection. The REST enforcement API rejects `firebasevertexai.googleapis.com` as a target, so this is a console-only step. Enabling it will also break local dev AI calls until a debug token is registered.
+- **App Check** (reCAPTCHA Enterprise, site key in `firebaseConfig.ts`) initializes **lazily inside `getModel()`**, not at startup — it fetches reCAPTCHA from google.com, and the offline-first rule-based path must never depend on the network. Enforcement is set to `ENFORCED` on `firebaseml.googleapis.com` (the only service ID the App Check REST API accepts — it rejects `firebasevertexai.googleapis.com`). ⚠️ **Unconfirmed**: production AI still works with it on, but that is also what a no-op would look like, so it is not proof that this ID governs AI Logic. Confirm in the console (App Check → APIs → Firebase AI Logic should read *Enforced*) and flip it there if not. Note that real enforcement breaks local dev AI until a debug token is registered.
+
+## Key hygiene
+
+Two Google API keys exist for this project; know which is which:
+
+- **Browser key** — the `apiKey` in [src/lib/firebaseConfig.ts](src/lib/firebaseConfig.ts). Public by design, ships in the bundle, safe to commit. GitHub secret scanning flags its `AIza…` shape; that alert is the expected false positive and rotating it accomplishes nothing. It is hardened via an API allowlist + HTTP referrer restrictions (Hosting domains + localhost). If you ever add a domain, add it to the key's referrer list or the app breaks there.
+- **Gemini key** (`gemini-ai-logic`) — restricted to `generativelanguage.googleapis.com`, stored **server-side** in the AI Logic config. It must never appear in this repo. If it ever leaks, rotate it via the API Keys API and re-PATCH `generativeLanguageConfig`.
 
 ## Architecture
 
