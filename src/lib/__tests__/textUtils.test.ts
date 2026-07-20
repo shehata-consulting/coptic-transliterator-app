@@ -1,8 +1,7 @@
-// Ported from coptic-transliterator-llm/tests/test_text_utils.py (the LLM
-// chunk/clean helpers stay in Python until Phase 2).
+// Ported from coptic-transliterator-llm/tests/test_text_utils.py.
 import { describe, expect, it } from 'vitest';
 
-import { containsCoptic, interlinearLines } from '../textUtils';
+import { chunkText, cleanLlmOutput, containsCoptic, interlinearLines } from '../textUtils';
 
 describe('containsCoptic', () => {
   it('detects coptic', () => {
@@ -13,6 +12,64 @@ describe('containsCoptic', () => {
   it('plain latin is clean', () => {
     expect(containsCoptic('pnoute agape')).toBe(false);
     expect(containsCoptic('')).toBe(false);
+  });
+});
+
+describe('chunkText', () => {
+  it('short text single chunk', () => {
+    expect(chunkText('hello', 100)).toEqual(['hello']);
+  });
+
+  it('splits on line boundaries', () => {
+    const text = 'aaa\nbbb\nccc\n';
+    const chunks = chunkText(text, 8);
+    expect(chunks.every((c) => c.length <= 8)).toBe(true);
+    expect(chunks.join('')).toBe(text);
+  });
+
+  it('oversized single line hard splits', () => {
+    const text = 'x'.repeat(25);
+    const chunks = chunkText(text, 10);
+    expect(chunks.every((c) => c.length <= 10)).toBe(true);
+    expect(chunks.join('')).toBe(text);
+  });
+
+  it('content always preserved', () => {
+    const text = 'ⲡⲛⲟⲩⲧⲉ ⲙⲁⲣⲓⲁ\n'.repeat(50);
+    expect(chunkText(text, 64).join('')).toBe(text);
+  });
+});
+
+describe('cleanLlmOutput', () => {
+  it('plain output passes through', () => {
+    expect(cleanLlmOutput('pnoute maria')).toBe('pnoute maria');
+  });
+
+  it('strips whitespace', () => {
+    expect(cleanLlmOutput('  pnoute \n')).toBe('pnoute');
+  });
+
+  it('strips markdown fences', () => {
+    expect(cleanLlmOutput('```\npnoute\n```')).toBe('pnoute');
+    expect(cleanLlmOutput('```text\npnoute\n```')).toBe('pnoute');
+  });
+
+  it('removes diacritics', () => {
+    expect(cleanLlmOutput('pnoutē mārya')).toBe('pnoute marya');
+  });
+
+  it('rejects coptic echo', () => {
+    expect(cleanLlmOutput('ⲡⲛⲟⲩⲧⲉ')).toBeNull();
+  });
+
+  it('rejects empty', () => {
+    expect(cleanLlmOutput('')).toBeNull();
+    expect(cleanLlmOutput(null)).toBeNull();
+    expect(cleanLlmOutput('```\n```')).toBeNull();
+  });
+
+  it('rejects mostly non-ascii', () => {
+    expect(cleanLlmOutput('日本語のテキストです')).toBeNull();
   });
 });
 

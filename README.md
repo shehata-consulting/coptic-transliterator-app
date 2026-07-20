@@ -11,11 +11,11 @@
 - **🗣️ Pronunciation guide** — letter-by-letter Greco-Bohairic reference with context-sensitive variants.
 - **🏠 Installable PWA** — add to home screen for an app-like experience.
 
-AI-enhanced transliteration (Gemini via Firebase AI Logic) is planned as an optional Phase 2 — the rule engine always remains the offline fallback.
+- **✨ Optional AI enhancement** — one tap sends the text to Gemini (via Firebase AI Logic) for a second opinion, shown alongside the rule-based result. Entirely opt-in; the app never calls it on its own, and it always falls back silently if the AI is unavailable.
 
 ## The engine
 
-[`src/lib/translit.ts`](src/lib/translit.ts) is a line-for-line TypeScript port of the canonical Python engine [`coptictranslit`](https://github.com/shehata-consulting/coptic-transliterator-llm) v2.0.0. The two are pinned **byte-identical** by a golden parity suite: [`scripts/gen-golden.py`](scripts/gen-golden.py) runs the Python engine over the text library + edge cases and the vitest suite replays the results against the TS port. Rule changes must land in both engines together.
+[`src/lib/translit.ts`](src/lib/translit.ts) is a line-for-line TypeScript port of the canonical Python engine `coptictranslit` v2.0.0 (on [PyPI](https://pypi.org/project/coptictranslit/); vendored here at [`scripts/reference/coptictranslit.py`](scripts/reference/coptictranslit.py)). The two are pinned **byte-identical** by a golden parity suite: [`scripts/gen-golden.py`](scripts/gen-golden.py) runs the Python engine over the text library + edge cases and the vitest suite replays the results against the TS port. Rule changes must land in both engines together.
 
 ## Development
 

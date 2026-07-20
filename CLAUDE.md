@@ -14,11 +14,22 @@ Three tabs: **Transliterate** (live rule-based engine, on-screen Coptic keyboard
 - `npm start` — Expo dev server (`npm run ios|android|web`)
 - `npm run lint` — `expo lint`
 - `npm test` — vitest over `src/lib` (engine + helpers + golden parity)
-- `python3 scripts/gen-golden.py` — regenerate `src/lib/__tests__/golden.json` from the canonical Python engine (needs the sibling repo `../coptic-transliterator-llm` checked out)
+- `python3 scripts/gen-golden.py` — regenerate `src/lib/__tests__/golden.json` from the vendored Python engine (`scripts/reference/coptictranslit.py`). No sibling checkout needed; if `../coptic-transliterator-llm` happens to be present, the script warns when the vendored copy has drifted from it.
 
 ## The engine parity contract (the rule that matters most)
 
-[src/lib/translit.ts](src/lib/translit.ts) is a line-for-line port of the canonical Python engine `coptic-transliterator-llm/coptictranslit/__init__.py`. **The two engines must stay rule-identical.** Any rule change happens in BOTH engines, then `gen-golden.py` regenerates the golden file and `npm test` must pass. Never "improve" a rule on one side only — the golden suite exists to catch exactly that. The combining-marks stripping differs mechanically (Python `unicodedata.combining`, TS a block-range regex) — the golden corpus guards their equivalence; extend `EDGE_CASES` in gen-golden.py when touching it.
+[src/lib/translit.ts](src/lib/translit.ts) is a line-for-line port of the canonical Python engine, vendored verbatim at [scripts/reference/coptictranslit.py](scripts/reference/coptictranslit.py) (= `coptictranslit` v2.0.0, also published to PyPI from the sibling repo). **The two engines must stay rule-identical.** Any rule change happens in BOTH engines, then `gen-golden.py` regenerates the golden file and `npm test` must pass. Never "improve" a rule on one side only — the golden suite exists to catch exactly that. The combining-marks stripping differs mechanically (Python `unicodedata.combining`, TS a block-range regex) — the golden corpus guards their equivalence; extend `EDGE_CASES` in gen-golden.py when touching it.
+
+## AI enhancement (Phase 2)
+
+[src/lib/ai.ts](src/lib/ai.ts) — optional Gemini pass via **Firebase AI Logic** (`GoogleAIBackend` = Gemini Developer API), same system instruction / few-shot prompt / temperature / chunking / retry / ASCII validation as the Streamlit app. Rules that matter:
+
+- **On-demand only.** It runs when the user presses "Enhance with AI" — never automatically — so free-tier quota is never spent unasked. The rule-based result is always computed and always displayed alongside.
+- **Never fatal.** `aiTransliterate` returns `null` on any failure and the UI keeps the rule-based output. AI can only ever add a second opinion.
+- **Model is the rolling alias `gemini-flash-lite-latest`.** The Streamlit app's pinned `gemini-2.5-flash-lite` returns 404 "no longer available to new users" on this (newer) project. Don't pin a dated model here without checking it resolves for this project first.
+- **The Gemini API key lives server-side** in the project's AI Logic config (`generativeLanguageConfig`), never in this bundle. Rotate it via the Firebase console or the `firebasevertexai …/locations/global/config` PATCH endpoint.
+- **Cost:** Gemini Developer API free tier on the Spark plan. There is no billing account, so quota exhaustion degrades to `null` (rule-based fallback) — it can never produce a charge.
+- **App Check** (reCAPTCHA Enterprise, site key in `firebaseConfig.ts`) initializes **lazily inside `getModel()`**, not at startup — it fetches reCAPTCHA from google.com, and the offline-first rule-based path must never depend on the network. ⚠️ **Enforcement is not on yet**: the client sends tokens, but until enforcement is enabled for AI Logic in the Firebase console (App Check → APIs), App Check provides no actual protection. The REST enforcement API rejects `firebasevertexai.googleapis.com` as a target, so this is a console-only step. Enabling it will also break local dev AI calls until a debug token is registered.
 
 ## Architecture
 

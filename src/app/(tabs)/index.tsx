@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { aiTransliterate } from '@/lib/ai';
 import { Icon } from '@/components/Icon';
 import { Interlinear } from '@/components/Interlinear';
 import { PressableScale } from '@/components/PressableScale';
@@ -23,6 +24,32 @@ export default function TransliterateScreen() {
 
   // Live transliteration — the engine is instant, no button needed.
   const { result, unmapped } = useMemo(() => translitWithWarnings(input), [input]);
+
+  // AI enhancement is on-demand (button) so nothing burns Gemini free-tier
+  // quota unasked. The result carries the input it was computed for; editing
+  // the input invalidates it by derivation — no effects, no stale flashes.
+  const [aiState, setAiState] = useState<{
+    status: 'loading' | 'done' | 'failed';
+    text: string | null;
+    forInput: string;
+  } | null>(null);
+  const ai =
+    aiState && aiState.forInput === input
+      ? aiState
+      : ({ status: 'idle', text: null } as const);
+
+  const enhance = async () => {
+    const snapshot = input;
+    setAiState({ status: 'loading', text: null, forInput: snapshot });
+    const out = await aiTransliterate(snapshot);
+    setAiState((cur) =>
+      cur?.status === 'loading' && cur.forInput === snapshot
+        ? out
+          ? { status: 'done', text: out, forInput: snapshot }
+          : { status: 'failed', text: null, forInput: snapshot }
+        : cur
+    );
+  };
 
   const copy = () => {
     // Web-only convenience (PWA-first); native gets selectable text below.
@@ -126,11 +153,41 @@ export default function TransliterateScreen() {
             Type or paste Coptic above — the transliteration appears instantly, even offline.
           </Text>
         ) : view === 'Latin' ? (
-          <Text style={s.output} selectable>
-            {result}
-          </Text>
+          <>
+            {ai.status === 'done' && ai.text !== null && (
+              <View style={s.aiBlock}>
+                <Text style={s.aiLabel}>✨ AI-enhanced</Text>
+                <Text style={s.output} selectable>
+                  {ai.text}
+                </Text>
+              </View>
+            )}
+            {ai.status === 'done' && <Text style={s.subLabel}>Rule-based</Text>}
+            <Text style={s.output} selectable>
+              {result}
+            </Text>
+          </>
         ) : (
           <Interlinear source={input} latin={result} />
+        )}
+
+        {result.length > 0 && view === 'Latin' && (
+          <View style={s.aiRow}>
+            {ai.status === 'loading' ? (
+              <View style={s.aiStatus}>
+                <ActivityIndicator size="small" color={colors.accent} />
+                <Text style={s.aiStatusText}>Asking Gemini…</Text>
+              </View>
+            ) : ai.status === 'idle' ? (
+              <PressableScale onPress={enhance} style={[s.chip, s.aiChip]}>
+                <Text style={[s.chipLabel, { color: colors.accent }]}>✨ Enhance with AI</Text>
+              </PressableScale>
+            ) : ai.status === 'failed' ? (
+              <Text style={s.aiStatusText}>
+                AI unavailable right now — the rule-based result above is complete.
+              </Text>
+            ) : null}
+          </View>
         )}
       </Card>
     </Screen>
@@ -159,4 +216,12 @@ const s = StyleSheet.create({
 
   empty: { fontSize: 13, color: colors.textDim, lineHeight: 19 },
   output: { fontSize: 17, color: colors.text, lineHeight: 26 },
+
+  aiBlock: { borderLeftWidth: 2, borderLeftColor: colors.accent + '88', paddingLeft: 12, marginBottom: 14 },
+  aiLabel: { fontSize: 11, fontWeight: '700', color: colors.accent, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 6 },
+  subLabel: { fontSize: 11, fontWeight: '700', color: colors.textDim, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 6 },
+  aiRow: { marginTop: 14 },
+  aiChip: { alignSelf: 'flex-start', borderColor: colors.accent + '66' },
+  aiStatus: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  aiStatusText: { fontSize: 12, color: colors.textDim },
 });
