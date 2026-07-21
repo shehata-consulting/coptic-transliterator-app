@@ -8,7 +8,7 @@
 // in the project's AI Logic config and appears nowhere in this repo). The
 // browser key is hardened out-of-band instead: an API allowlist plus HTTP
 // referrer restrictions pinned to the Hosting domains and localhost.
-export const FIREBASE_CONFIG = {
+export const firebaseConfig = {
   apiKey: 'AIzaSyB9HqNEBViPxKBqdug29ichtOgyoMZcsaI',
   authDomain: 'coptic-transliterator-app.firebaseapp.com',
   projectId: 'coptic-transliterator-app',
