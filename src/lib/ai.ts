@@ -11,7 +11,7 @@
 // mean a null return here.
 import type { GenerativeModel } from 'firebase/ai';
 
-import { FIREBASE_CONFIG, RECAPTCHA_SITE_KEY } from './firebaseConfig';
+import { firebaseConfig, RECAPTCHA_SITE_KEY } from './firebaseConfig';
 import { chunkText, cleanLlmOutput, LLM_MAX_CHUNKS } from './textUtils';
 
 // The Streamlit app pins gemini-2.5-flash-lite, but that model is closed to
@@ -47,7 +47,7 @@ function getModel(): Promise<GenerativeModel> {
     modelPromise = (async () => {
       const { initializeApp } = await import('firebase/app');
       const { getAI, getGenerativeModel, GoogleAIBackend } = await import('firebase/ai');
-      const app = initializeApp(FIREBASE_CONFIG);
+      const app = initializeApp(firebaseConfig);
 
       // App Check attests that requests come from this site, so the project's
       // free-tier Gemini quota can't be spent by scripts lifting the (public)
