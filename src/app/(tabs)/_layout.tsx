@@ -25,7 +25,11 @@ export default function TabsLayout() {
         tabBarBackground: () => (
           <BlurView intensity={theme.glass.blurIntensity} tint="dark" style={StyleSheet.absoluteFill} />
         ),
-        tabBarLabelStyle: { fontSize: 11 },
+        // The tab item is a fixed-height flex column (icon + label). Icon + label
+        // + padding just exceed it, so the label (flex-shrink:1) collapses below
+        // its line box and overflow:hidden clips the glyph bottoms — visible on
+        // iOS Safari (standalone PWA). flexShrink:0 keeps the full line box.
+        tabBarLabelStyle: { fontSize: 11, lineHeight: 14, flexShrink: 0 },
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textDim,
       }}>
