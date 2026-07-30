@@ -17,7 +17,7 @@ Three tabs: **Transliterate** (live rule-based engine, on-screen Coptic keyboard
 - `npm test` — vitest over `src/lib` (engine + helpers + golden parity)
 - `python3 scripts/gen-golden.py` — regenerate `src/lib/__tests__/golden.json` from the vendored Python engine (`scripts/reference/coptictranslit.py`). No sibling checkout needed; if `../coptic-transliterator-llm` happens to be present, the script warns when the vendored copy has drifted from it.
 
-`lint` + `typecheck` + `test` all run in CI on push/PR; run them before pushing.
+`lint` + `typecheck` + `test` all run in CI on push/PR; run them before pushing. After a batch of code changes, run `/check` (the three checks + a review of the diff) before reporting the work done — use judgment: skip it for docs- or config-only edits.
 
 ## The engine parity contract (the rule that matters most)
 
