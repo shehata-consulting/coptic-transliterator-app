@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm test *)",
+      "Bash(npm run lint *)",
+      "Bash(npm run typecheck *)",
+      "Bash(npx tsc --noEmit *)",
+      "Bash(tsc --noEmit *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in */src/components/GlassCard.tsx|*/src/components/AppBackground.tsx|*/src/components/PressableScale.tsx|*/src/components/AnimatedNumber.tsx) printf '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"%s\"}}' \"Edited a shared Lumen component: it is byte-identical across all four Expo apps. Run ~/dev_personal/bin/sync-lumen.sh --check, then --from <this-app>, and commit the change in every app.\";; */src/lib/tax-core.ts) printf '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"%s\"}}' \"Edited src/lib/tax-core.ts: it is byte-identical across marketplace-selling and llc-tax-tracker. Run ~/dev_personal/bin/sync-tax-core.sh --check, then --from <this-app>, and commit in both tax apps.\";; esac"
+          }
+        ]
+      }
+    ]
+  }
+}
