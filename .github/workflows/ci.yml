@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Lets a run be re-fired for a commit whose push webhook was dropped —
+  # a GitHub Actions incident silently created no runs at all, twice, and
+  # without this there is no way to get CI onto that SHA short of an empty
+  # commit. Changes nothing about a normal push.
+  workflow_dispatch:
 
 jobs:
   check:

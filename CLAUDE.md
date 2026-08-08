@@ -53,7 +53,7 @@ Two Google API keys exist for this project; know which is which:
 
 ## CI & hosting
 
-- [.github/workflows/ci.yml](.github/workflows/ci.yml) — `lint` + `typecheck` + `test` on every push to `main` and every PR. Identical across the four sibling Expo apps; keep it that way.
+- [.github/workflows/ci.yml](.github/workflows/ci.yml) — `lint` + `typecheck` + `test` on every push to `main` and every PR. Identical across the four sibling Expo apps; keep it that way. Also `workflow_dispatch`, so a run can be re-fired for a commit whose push webhook was dropped — a GitHub Actions incident silently created no runs at all twice in Aug 2026, and nothing backfills them.
 - **Live app:** <https://coptic-transliterator-app.web.app> — Firebase Hosting, dedicated project `coptic-transliterator-app` on the **Spark (no-cost) plan**; keep it on Spark, there is nothing here that needs billing.
 - [.github/workflows/deploy.yml](.github/workflows/deploy.yml) — on every push to `main`, exports the web build (`npx expo export --platform web` → `dist/`) and deploys using the `FIREBASE_SERVICE_ACCOUNT` secret (service account `github-action-deploy@coptic-transliterator-app.iam.gserviceaccount.com`, scoped to hosting-admin on this project only). **Push = production deploy** — confirm with the user before pushing.
 - `dist/` is generated; never hand-edit or commit it.

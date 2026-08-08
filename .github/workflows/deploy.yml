@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
     paths-ignore:
+      # Workflow edits don't change the built app: a CI-only commit used to
+      # rebuild and redeploy all four apps for nothing. Covers deploy.yml
+      # itself too — fire a deploy deliberately with workflow_dispatch.
+      - '.github/**'
       - '.claude/**'
       - 'CLAUDE.md'
   workflow_dispatch:
